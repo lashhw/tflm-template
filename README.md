@@ -23,9 +23,6 @@ target you need:
 | `make microlite-h7` | `gen/h7/lib/libtensorflow-microlite.a` with Cortex-M7 CMSIS-NN kernels |
 | `make` | All libraries |
 
-Each build also regenerates `src/gen/models.cc` and `src/gen/models.h` with the
-model data and required operator registrations. Do not edit generated files.
-
 The model filename stem becomes its API suffix. For example,
 `hello_world_int8.tflite` generates `tflm_init_hello_world_int8()`.
 
