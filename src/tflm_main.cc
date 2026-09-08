@@ -1,4 +1,5 @@
 #include "tflm_main.h"
+
 #include "tensorflow/lite/micro/micro_interpreter.h"
 #include "tensorflow/lite/micro/micro_mutable_op_resolver.h"
 #include "tensorflow/lite/micro/system_setup.h"
@@ -45,17 +46,23 @@ TflmStatus InitializeModel(const unsigned char* model_data, AddOpsFn add_ops,
   static tflite::MicroMutableOpResolver<kMaxOps> resolver;
   TFLM_ENSURE(add_ops(resolver) == kTfLiteOk);
 
-  static tflite::MicroInterpreter interpreter(model, resolver, tensor_arena, tensor_arena_size);
-  TFLM_ENSURE(interpreter.inputs_size() == 1 && interpreter.outputs_size() == 1);
-  TFLM_ENSURE(interpreter.AllocateTensors() == kTfLiteOk);
+  if (g_interpreter) {
+    delete g_interpreter;
+    g_interpreter = nullptr;
+  }
+  g_input = {};
+  g_output = {};
 
-  TfLiteTensor* input = interpreter.input(0);
-  TfLiteTensor* output = interpreter.output(0);
+  g_interpreter = new tflite::MicroInterpreter(model, resolver, tensor_arena, tensor_arena_size);
+  TFLM_ENSURE(g_interpreter->inputs_size() == 1 && g_interpreter->outputs_size() == 1);
+  TFLM_ENSURE(g_interpreter->AllocateTensors() == kTfLiteOk);
+
+  TfLiteTensor* input = g_interpreter->input(0);
+  TfLiteTensor* output = g_interpreter->output(0);
   TFLM_ENSURE(input && output);
 
   SetTensor(&g_input, input);
   SetTensor(&g_output, output);
-  g_interpreter = &interpreter;
 
   return TFLM_OK;
 }
@@ -68,16 +75,14 @@ TflmStatus InitializeModel(const unsigned char* model_data, AddOpsFn add_ops,
       TFLM_APPLY_MODEL_OPS_##symbol(resolver);                                      \
       return kTfLiteOk;                                                             \
     };                                                                              \
-    static const TflmStatus status = InitializeModel<TFLM_MODEL_OP_COUNT_##symbol>( \
-      g_model_data_##symbol, add_ops, tensor_arena, tensor_arena_size               \
-    );                                                                              \
-    return status;                                                                  \
+    return InitializeModel<TFLM_MODEL_OP_COUNT_##symbol>(                           \
+        g_model_data_##symbol, add_ops, tensor_arena, tensor_arena_size);           \
   }
 TFLM_FOREACH_MODEL(DEFINE_TFLM_INIT)
 #undef DEFINE_TFLM_INIT
 
-TflmTensor* tflm_input(void) { 
-  return g_interpreter ? &g_input : nullptr; 
+TflmTensor* tflm_input(void) {
+  return g_interpreter ? &g_input : nullptr;
 }
 
 const TflmTensor* tflm_output(void) {

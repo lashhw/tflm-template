@@ -4,7 +4,7 @@ TENSOR_ARENA_SIZE ?= 10000000
 TFLM_COMMIT := 6c1c1a8
 TFLM_MAKEFILE := tflite-micro/tensorflow/lite/micro/tools/make/Makefile
 
-.PHONY: all microlite microlite-f7 microlite-h7 clean
+.PHONY: all tflite-micro microlite microlite-f7 microlite-h7 tflm_main clean
 
 all: microlite microlite-f7 microlite-h7
 
