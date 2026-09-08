@@ -6,7 +6,7 @@ TFLM_MAKEFILE := tflite-micro/tensorflow/lite/micro/tools/make/Makefile
 
 .PHONY: all microlite microlite-f7 microlite-h7 clean
 
-all: microlite microlite-f7 microlite-h7 tflm_main
+all: microlite microlite-f7 microlite-h7
 
 tflite-micro:
 	test -d tflite-micro || git clone https://github.com/tensorflow/tflite-micro.git
