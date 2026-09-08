@@ -2,4 +2,3 @@ gen
 src/gen
 tflite-micro
 venv
-tflm_main

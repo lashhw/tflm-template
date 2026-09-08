@@ -21,7 +21,6 @@ target you need:
 | `make microlite` | `gen/linux_x86_64_debug_gcc/lib/libtensorflow-microlite.a` |
 | `make microlite-f7` | `gen/f7/lib/libtensorflow-microlite.a` with Cortex-M7 CMSIS-NN kernels |
 | `make microlite-h7` | `gen/h7/lib/libtensorflow-microlite.a` with Cortex-M7 CMSIS-NN kernels |
-| `make tflm_main` | Host library and `tflm_main` smoke-test executable |
 | `make` | All libraries and the host smoke test |
 
 Each build also regenerates `src/gen/models.cc` and `src/gen/models.h` with the
@@ -63,7 +62,7 @@ Build and run the host runner:
 
 ```sh
 make tflm_main
-./tflm_main
+./gen/tflm_main
 ```
 
 The runner fills each input tensor with zero bytes and invokes every generated

@@ -30,8 +30,7 @@ tflm_main: microlite main.cpp
 	  -DTENSOR_ARENA_SIZE=$(TENSOR_ARENA_SIZE) \
 	  -Lgen/linux_x86_64_debug_gcc/lib \
 	  -ltensorflow-microlite \
-	  -o tflm_main
+	  -o gen/tflm_main
 
 clean:
 	$(MAKE) -f "$(TFLM_MAKEFILE)" TENSORFLOW_ROOT=tflite-micro/ EXTERNAL_DIR=src/ clean
-	rm -f tflm_main
