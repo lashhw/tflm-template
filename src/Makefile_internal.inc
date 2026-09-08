@@ -7,7 +7,7 @@ MICROLITE_CC_SRCS += $(GEN_DIR)models.cc $(EXTERNAL_DIR)tflm_main.cc
 
 .PHONY: clean_gen
 
-$(GEN_DIR)models.cc $(GEN_DIR)models.h: $(GEN_SCRIPT) $(MODEL_DIR) $(MODEL_TFLITE)
+$(GEN_DIR)models.cc $(GEN_DIR)models.h &: $(GEN_SCRIPT) $(MODEL_DIR) $(MODEL_TFLITE)
 	python $(GEN_SCRIPT) --models_dir $(MODEL_DIR) --out_dir $(GEN_DIR)
 
 $(CORE_OBJDIR)$(GEN_DIR)models.o: $(GEN_DIR)models.cc $(GEN_DIR)models.h
