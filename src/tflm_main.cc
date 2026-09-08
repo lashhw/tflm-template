@@ -44,7 +44,8 @@ TflmStatus InitializeModel(const unsigned char* model_data, AddOpsFn add_ops,
   TFLM_ENSURE(model->version() == TFLITE_SCHEMA_VERSION);
 
   static tflite::MicroMutableOpResolver<kMaxOps> resolver;
-  TFLM_ENSURE(add_ops(resolver) == kTfLiteOk);
+  static const TfLiteStatus resolver_status = add_ops(resolver);
+  TFLM_ENSURE(resolver_status == kTfLiteOk);
 
   if (g_interpreter) {
     delete g_interpreter;

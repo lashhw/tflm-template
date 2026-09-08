@@ -1,8 +1,5 @@
 #pragma once
 
-#include <stddef.h>
-#include <stdint.h>
-
 #include "gen/models.h"
 
 #ifdef __cplusplus
