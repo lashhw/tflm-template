@@ -58,7 +58,7 @@ Build and run the host runner:
 
 ```sh
 make tflm_main
-./gen/tflm_main
+gen/tflm_main
 ```
 
 The runner fills each input tensor with zero bytes and invokes every generated
