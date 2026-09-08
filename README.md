@@ -1,29 +1,73 @@
 # TFLM Template
 
-This project builds TensorFlow Lite Micro libraries and a simple runner for your models.
+This template embeds `.tflite` models, builds TensorFlow Lite Micro static
+libraries, and provides a host smoke-test runner.
 
-## Setup
-Install dependencies before building:
-```
+## Set up
+
+```sh
 python -m venv venv
-. venv/bin/activate
+source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-## Build
-Run `make` to generate static libraries for both the host (Linux) and Cortex-M7 (with CMSIS-NN):
-```
-make
-```
-The build pulls in TFLM sources and produces the libraries under `gen/`, including:
-- `gen/linux_x86_64_debug_gcc/lib/libtensorflow-microlite.a`
-- `gen/f7/lib/libtensorflow-microlite.a`
-- `gen/h7/lib/libtensorflow-microlite.a`
+## Add models and build
 
-To add your own models, drop `.tflite` files into `src/models`. The generator will include them on the next `make` and expose per-model entrypoints named `tflm_main_<model_name>`, each taking `(uint8_t* tensor_arena, int tensor_arena_size, uint32_t (*get_time_ms)())` so you can supply your own arena buffer and an millisecond time getter (e.g., `HAL_GetTick` on STM32).
+Place one or more models in `src/models/`, then build the library for the
+target you need:
 
-## Run models on host
-After `make`, execute the host runner to invoke all configured models:
+| Target | Output |
+| --- | --- |
+| `make microlite` | `gen/linux_x86_64_debug_gcc/lib/libtensorflow-microlite.a` |
+| `make microlite-f7` | `gen/f7/lib/libtensorflow-microlite.a` with Cortex-M7 CMSIS-NN kernels |
+| `make microlite-h7` | `gen/h7/lib/libtensorflow-microlite.a` with Cortex-M7 CMSIS-NN kernels |
+| `make tflm_main` | Host library and `tflm_main` smoke-test executable |
+| `make` | All libraries and the host smoke test |
+
+Each build also regenerates `src/gen/models.cc` and `src/gen/models.h` with the
+model data and required operator registrations. Do not edit generated files.
+
+The model filename stem becomes its API suffix; punctuation is replaced with
+underscores. Use a stem that starts with a letter or underscore. For example,
+`hello_world_int8.tflite` generates `tflm_init_hello_world_int8()`.
+
+## Use the library from C
+
+Add `src/` to the application's include paths and link the target library.
+
+```c
+#include "tflm_main.h"
+
+_Alignas(16) static uint8_t arena[256 * 1024];
+
+if (tflm_init_hello_world_int8(arena, sizeof(arena)) != TFLM_OK)
+  return ERROR;
+
+TflmTensor *input = tflm_input();
+const TflmTensor *output = tflm_output();
+int8_t *input_data = input->data.i8;
+
+/* Fill input_data, then run inference. */
+if (tflm_invoke() != TFLM_OK)
+  return ERROR;
+const int8_t *output_data = output->data.i8;
 ```
-./tflm_main
+
+The arena must remain valid for the application's lifetime. Only one model can
+be initialized, and initialization must complete before using the tensor
+pointers. `tflm_arena_used_bytes()` reports the number of arena bytes used.
+
+## Check inference on the host
+
+Build the runner and give it the filename stem of one generated model:
+
+```sh
+make tflm_main
+./tflm_main hello_world_int8
 ```
+
+The runner fills the input tensor with zero bytes and invokes the model once
+through the same API shown above. It prints the output tensor and reports
+tensor sizes, arena use, and latency.
+
+Run `make clean` to remove generated model sources and build outputs.
