@@ -35,7 +35,7 @@ int main() {
   int status = 0;
 #define RUN_MODEL(symbol, display_name) \
   status |= RunModel(display_name, tflm_init_##symbol);
-  TFLM_FOREACH_MODEL(RUN_MODEL)
+TFLM_FOREACH_MODEL(RUN_MODEL)
 #undef RUN_MODEL
   return status;
 }
