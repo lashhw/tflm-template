@@ -21,7 +21,7 @@ target you need:
 | `make microlite` | `gen/linux_x86_64_debug_gcc/lib/libtensorflow-microlite.a` |
 | `make microlite-f7` | `gen/f7/lib/libtensorflow-microlite.a` with Cortex-M7 CMSIS-NN kernels |
 | `make microlite-h7` | `gen/h7/lib/libtensorflow-microlite.a` with Cortex-M7 CMSIS-NN kernels |
-| `make` | All libraries and the host smoke test |
+| `make` | All libraries |
 
 Each build also regenerates `src/gen/models.cc` and `src/gen/models.h` with the
 model data and required operator registrations. Do not edit generated files.
