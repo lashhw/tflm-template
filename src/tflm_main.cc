@@ -70,20 +70,20 @@ TflmStatus tflm_invoke(void) {
   return g_interpreter->Invoke() == kTfLiteOk ? TFLM_OK : TFLM_ERROR;
 }
 
-#define DEFINE_TFLM_INIT(symbol, display_name)                              \
-  TflmStatus tflm_init_##symbol(uint8_t* tensor_arena,                      \
-                                size_t tensor_arena_size) {                  \
-    using Resolver =                                                        \
-        tflite::MicroMutableOpResolver<TFLM_MODEL_OP_COUNT_##symbol>;        \
-    auto add_ops = [](Resolver& resolver) {                                  \
-      TFLM_APPLY_MODEL_OPS_##symbol(resolver);                               \
-      return kTfLiteOk;                                                      \
-    };                                                                       \
-    static const TflmStatus status =                                         \
-        InitializeModel<TFLM_MODEL_OP_COUNT_##symbol>(                       \
-            g_model_data_##symbol, add_ops, tensor_arena,                    \
-            tensor_arena_size);                                              \
-    return status;                                                           \
+#define DEFINE_TFLM_INIT(symbol, display_name)                         \
+  TflmStatus tflm_init_##symbol(uint8_t* tensor_arena,                 \
+                                size_t tensor_arena_size) {            \
+    using Resolver =                                                   \
+        tflite::MicroMutableOpResolver<TFLM_MODEL_OP_COUNT_##symbol>;  \
+    auto add_ops = [](Resolver& resolver) {                            \
+      TFLM_APPLY_MODEL_OPS_##symbol(resolver);                         \
+      return kTfLiteOk;                                                \
+    };                                                                 \
+    static const TflmStatus status =                                   \
+        InitializeModel<TFLM_MODEL_OP_COUNT_##symbol>(                 \
+            g_model_data_##symbol, add_ops, tensor_arena,              \
+            tensor_arena_size);                                        \
+    return status;                                                     \
   }
 TFLM_FOREACH_MODEL(DEFINE_TFLM_INIT)
 #undef DEFINE_TFLM_INIT
