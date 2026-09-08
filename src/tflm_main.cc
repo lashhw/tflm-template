@@ -7,7 +7,8 @@
 #include "tensorflow/lite/micro/system_setup.h"
 
 namespace {
-alignas(tflite::MicroInterpreter) unsigned char g_interpreter_storage[sizeof(tflite::MicroInterpreter)];
+alignas(tflite::MicroInterpreter)
+  unsigned char g_interpreter_storage[sizeof(tflite::MicroInterpreter)];
 tflite::MicroInterpreter* g_interpreter = nullptr;
 TflmTensor g_input = {};
 TflmTensor g_output = {};
@@ -57,7 +58,8 @@ TflmStatus InitializeModel(const unsigned char* model_data, AddOpsFn add_ops,
   g_input = {};
   g_output = {};
 
-  g_interpreter = new (g_interpreter_storage) tflite::MicroInterpreter(model, resolver, tensor_arena, tensor_arena_size);
+  g_interpreter = new (g_interpreter_storage)
+    tflite::MicroInterpreter(model, resolver, tensor_arena, tensor_arena_size);
   TFLM_ENSURE(g_interpreter->initialization_status() == kTfLiteOk);
   TFLM_ENSURE(g_interpreter->inputs_size() == 1 && g_interpreter->outputs_size() == 1);
   TFLM_ENSURE(g_interpreter->AllocateTensors() == kTfLiteOk);
