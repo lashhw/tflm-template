@@ -155,8 +155,9 @@ def main():
     for symbol, stem, path in sanitized:
         data = path.read_bytes()
         ops = [to_camel(op_name) for op_name in get_op_names(data)]
+        sha256 = hashlib.sha256(data).hexdigest()
         models_bytes.append((symbol, stem, data))
-        models_with_ops.append((symbol, stem, ops, hashlib.sha256(data).hexdigest()))
+        models_with_ops.append((symbol, stem, ops, sha256))
 
     write_header(out_dir, models_with_ops)
     write_source(out_dir, models_bytes)
