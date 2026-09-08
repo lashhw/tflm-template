@@ -26,7 +26,8 @@ microlite-h7: tflite-micro
 	$(MAKE) -j$(JOBS) -f "$(TFLM_MAKEFILE)" TENSORFLOW_ROOT=tflite-micro/ EXTERNAL_DIR=src/ OPTIMIZED_KERNEL_DIR=cmsis_nn TARGET=cortex_m_generic TARGET_ARCH=cortex-m7+fp FPU=fpv5-d16 GENDIR=gen/h7/ microlite
 
 tflm_main: microlite main.cpp
-	$(CXX) main.cpp -std=c++17 -Wall -Wextra -Werror \
+	$(CXX) main.cpp \
+	  -std=c++17 -Wall -Wextra -Werror \
 	  -DTENSOR_ARENA_SIZE=$(TENSOR_ARENA_SIZE) \
 	  -Lgen/linux_x86_64_debug_gcc/lib \
 	  -ltensorflow-microlite \
