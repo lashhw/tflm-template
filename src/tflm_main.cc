@@ -30,7 +30,7 @@ void SetTensor(TflmTensor* target, TfLiteTensor* source) {
 template <int kMaxOps, typename AddOpsFn>
 TflmStatus InitializeModel(const unsigned char* model_data, AddOpsFn add_ops,
                            uint8_t* tensor_arena, size_t tensor_arena_size) {
-  if (!tensor_arena || tensor_arena_size == 0 || g_interpreter)
+  if (!tensor_arena || tensor_arena_size == 0)
     return TFLM_ERROR;
   tflite::InitializeTarget();
   const tflite::Model* model = tflite::GetModel(model_data);

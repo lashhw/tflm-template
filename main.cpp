@@ -6,19 +6,12 @@
 
 alignas(16) static uint8_t tensor_arena[TENSOR_ARENA_SIZE];
 
-static int RunModel(const char* name) {
-#define RUN_IF_MATCH(symbol, display_name)                                   \
-  if (std::strcmp(name, display_name) == 0) {                                \
-    if (tflm_init_##symbol(tensor_arena, sizeof(tensor_arena)) != TFLM_OK) {  \
-      std::fprintf(stderr, "%s: initialization failed\n", name);             \
-      return 1;                                                              \
-    }                                                                        \
-  } else
-  TFLM_FOREACH_MODEL(RUN_IF_MATCH) {
-    std::fprintf(stderr, "Unknown model: %s\n", name);
+static int RunModel(const char* name,
+                    TflmStatus (*initialize)(uint8_t*, size_t)) {
+  if (initialize(tensor_arena, sizeof(tensor_arena)) != TFLM_OK) {
+    std::fprintf(stderr, "%s: initialization failed\n", name);
     return 1;
   }
-#undef RUN_IF_MATCH
 
   TflmTensor* input = tflm_input();
   const TflmTensor* output = tflm_output();
@@ -38,10 +31,11 @@ static int RunModel(const char* name) {
   return 0;
 }
 
-int main(int argc, char** argv) {
-  if (argc != 2) {
-    std::fprintf(stderr, "Usage: %s MODEL\n", argv[0]);
-    return 1;
-  }
-  return RunModel(argv[1]);
+int main() {
+  int status = 0;
+#define RUN_MODEL(symbol, display_name) \
+  status |= RunModel(display_name, tflm_init_##symbol);
+  TFLM_FOREACH_MODEL(RUN_MODEL)
+#undef RUN_MODEL
+  return status;
 }

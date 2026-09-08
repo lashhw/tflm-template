@@ -53,22 +53,22 @@ if (tflm_invoke() != TFLM_OK)
 const int8_t *output_data = output->data.i8;
 ```
 
-The arena must remain valid for the application's lifetime. Only one model can
-be initialized, and initialization must complete before using the tensor
+The arena must remain valid for the application's lifetime. Only one model is
+active at a time, and initialization must complete before using the tensor
 pointers. `tflm_arena_used_bytes()` reports the number of arena bytes used.
 
 ## Check inference on the host
 
-Build the runner and give it the filename stem of one generated model:
+Build and run the host runner:
 
 ```sh
 make tflm_main
-./tflm_main hello_world_int8
+./tflm_main
 ```
 
-The runner fills the input tensor with zero bytes and invokes the model once
-through the same API shown above. It reports tensor sizes, arena use, and
-latency.
+The runner fills each input tensor with zero bytes and invokes every generated
+model once through the same API shown above. It reports tensor sizes, arena use,
+and latency.
 
 ## Clean
 
