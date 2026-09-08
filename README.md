@@ -67,7 +67,9 @@ make tflm_main
 ```
 
 The runner fills the input tensor with zero bytes and invokes the model once
-through the same API shown above. It prints the output tensor and reports
-tensor sizes, arena use, and latency.
+through the same API shown above. It reports tensor sizes, arena use, and
+latency.
+
+## Clean
 
 Run `make clean` to remove generated model sources and build outputs.
