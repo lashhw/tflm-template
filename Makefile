@@ -13,10 +13,6 @@ tflite-micro:
 	git -C tflite-micro checkout $(TFLM_COMMIT)
 
 microlite: tflite-micro
-	set -e; \
-	restore() { git -C tflite-micro restore tensorflow/lite/micro/tools/make/Makefile; }; \
-	trap restore EXIT; \
-	sed -E -i 's/-O[1-3sz]/-O0/g' "$(TFLM_MAKEFILE)"; \
 	$(MAKE) -j$(JOBS) -f "$(TFLM_MAKEFILE)" TENSORFLOW_ROOT=tflite-micro/ EXTERNAL_DIR=src/ BUILD_TYPE=debug microlite
 
 microlite-f7: tflite-micro
